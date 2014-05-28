@@ -4,9 +4,10 @@
 package project;
 
 import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
 
 /**
+ * Player is represented by 1, Program is represented by -1
+ * 
  * @author Harrison
  * 
  */
@@ -16,15 +17,18 @@ public class Main {
 
 	/**
 	 * @param args
-	 * @throws InterruptedException 
+	 * @throws InterruptedException
 	 */
 	public static void main(String[] args) throws InterruptedException {
 
 		String input;
+		;
 		AB ai;
+		Action a;
 		int[][] init = new int[N][N];
+		boolean player;
 
-		State state = new State(init);
+		State state = new State(init, N * N);
 
 		System.out.println("How long should the program think to make a move?");
 		ai = new AB(sc.nextInt());
@@ -32,30 +36,42 @@ public class Main {
 
 		System.out.println("Are you going first? (Y/N)");
 		if (sc.nextLine().toUpperCase().charAt(0) != 'Y') {
+			player = false;
 			printState(state);
 			// program move some ab algorithm (usually the center 4 spaces)
+			a = ai.absearch(state);
+			state.move(a.i, a.j, player);
+			a.print();
 		}
 		printState(state);
-
+		player = true;
 		// not sure, but I think the board would fill up, resulting in a draw
 		// after (N*N)/2 turns
-		for (int i = 0; i < (N * N) / 2; i++) {
-			// opponent's move
-			System.out.print("Choose your next move: ");
-			input = sc.nextLine();
-			while (!state.move(input, true)) {
-				System.out.print("Invalid input, try again: ");
+
+		while (state.spaces > 0) {
+			if (player) {
+				// player move
+				System.out.print("Choose your next move: ");
 				input = sc.nextLine();
+				while (!state.move(input, player)) {
+					System.out.print("Invalid input, try again: ");
+					input = sc.nextLine();
+				}
+			} else {
+				// program move
+				a = ai.absearch(state);
+				state.move(a.i, a.j, player);
+				a.print();
 			}
+			if (player)
+				player = false;
+			else
+				player = true;
 			printState(state);
 			if (state.checkWin() != 0)
 				break;
-
-			// program move
-			// some AB algorithm
 		}
-		int win = state.checkWin();
-		switch (win) {
+		switch (state.checkWin()) {
 		case 0:
 			System.out.println("DRAW");
 			break;

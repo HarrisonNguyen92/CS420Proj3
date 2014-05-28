@@ -9,8 +9,10 @@ package project;
  */
 public class State {
 	public int[][] board;
+	public int spaces; // available spaces left
 
-	public State(int[][] init) {
+	public State(int[][] init, int spaces) {
+		this.spaces = spaces;
 		board = init;
 	}
 
@@ -19,6 +21,7 @@ public class State {
 		if (i < 0)
 			i = input.charAt(0) - 65;
 		int j = input.charAt(1) - 49;
+		--spaces;
 		return move(i, j, player);
 	}
 
