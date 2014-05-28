@@ -22,12 +22,10 @@ public class Main {
 	public static void main(String[] args) throws InterruptedException {
 
 		String input;
-		;
 		AB ai;
 		Action a;
 		int[][] init = new int[N][N];
 		boolean player;
-
 		State state = new State(init, N * N);
 
 		System.out.println("How long should the program think to make a move?");
@@ -35,19 +33,11 @@ public class Main {
 		sc.nextLine();
 
 		System.out.println("Are you going first? (Y/N)");
-		if (sc.nextLine().toUpperCase().charAt(0) != 'Y') {
+		if (sc.nextLine().toUpperCase().charAt(0) != 'Y')
 			player = false;
-			printState(state);
-			// program move some ab algorithm (usually the center 4 spaces)
-			a = ai.absearch(state);
-			state.move(a.i, a.j, player);
-			a.print();
-		}
+		else 
+			player = true;
 		printState(state);
-		player = true;
-		// not sure, but I think the board would fill up, resulting in a draw
-		// after (N*N)/2 turns
-
 		while (state.spaces > 0) {
 			if (player) {
 				// player move
