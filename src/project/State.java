@@ -30,11 +30,21 @@ public class State {
 		if (i > board.length || j > board.length || i < 0 || j < 0
 				|| board[i][j] != 0)
 			return false;
-		if (player)
+		if (!player)
 			board[i][j] = 1;
 		else
 			board[i][j] = -1;
 		return true;
+	}
+	
+	public int[][] fakeMove(int i, int j, boolean player){
+		int[][] fakeBoard = board.clone();
+		if (!player)
+			fakeBoard[i][j] = 1;
+		else
+			fakeBoard[i][j] = -1;
+		return fakeBoard;
+			
 	}
 
 	/**

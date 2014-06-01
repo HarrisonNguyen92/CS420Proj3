@@ -22,14 +22,14 @@ public class Main {
 	public static void main(String[] args) throws InterruptedException {
 
 		String input;
-		AB ai;
+		AlphaBeta ai;
 		Action a;
 		int[][] init = new int[N][N];
 		boolean player;
 		State state = new State(init, N * N);
 
 		System.out.println("How long should the program think to make a move?");
-		ai = new AB(sc.nextInt());
+		ai = new AlphaBeta(sc.nextInt());
 		sc.nextLine();
 
 		System.out.println("Are you going first? (Y/N)");
