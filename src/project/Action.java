@@ -15,4 +15,8 @@ public class Action {
 		this.i = i;
 		this.j = j;
 	}
+
+	public void print() {
+		System.out.println("Move: (" + i + ", " + j + ")\n");
+	}
 }
