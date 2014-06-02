@@ -6,7 +6,7 @@ package project;
 import java.util.Scanner;
 
 /**
- * Player is represented by 1, Program is represented by -1
+ * Player is represented by -1, Program is represented by 1
  * 
  * @author Harrison
  * 
@@ -24,9 +24,8 @@ public class Main {
 		String input;
 		AlphaBeta ai;
 		Action a;
-		int[][] init = new int[N][N];
 		boolean player;
-		State state = new State(init, N * N);
+		State state = new State(new int[N][N], N * N);
 
 		System.out.println("How long should the program think to make a move?");
 		ai = new AlphaBeta(sc.nextInt());
@@ -38,6 +37,7 @@ public class Main {
 		else 
 			player = true;
 		printState(state);
+		
 		while (state.spaces > 0) {
 			if (player) {
 				// player move
@@ -66,10 +66,10 @@ public class Main {
 			System.out.println("DRAW");
 			break;
 		case 1:
-			System.out.println("PLAYER 1 WINS");
+			System.out.println("AI WINS");
 			break;
 		case -1:
-			System.out.println("PLAYER 2 WINS");
+			System.out.println("PLAYER WINS");
 		}
 
 	}
