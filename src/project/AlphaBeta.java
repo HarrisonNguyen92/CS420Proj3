@@ -12,22 +12,22 @@ public class AlphaBeta {
 	 * The current worst value
 	 */
 	private int alpha;
-	
+
 	/**
 	 * The current best value
 	 */
 	private int beta;
-	
+
 	/**
 	 * the Start time of the algorithm
 	 */
 	private long startTime;
-	
+
 	/**
 	 * how long the algorithm should run
 	 */
 	private long limit;
-	
+
 	/**
 	 * depth of the algorithm (to be used with IDDFS)
 	 */
@@ -89,7 +89,7 @@ public class AlphaBeta {
 					// if (score < best)
 					// best = score;
 					state.undo(i, j);
-					if (best > beta)//pruning
+					if (best > beta)// pruning
 						return beta;
 				}
 			}
@@ -117,7 +117,7 @@ public class AlphaBeta {
 					// if (score > best)
 					// best = score;
 					state.undo(i, j);
-					if (best < alpha)//pruning
+					if (best < alpha)// pruning
 						return alpha;
 				}
 			}
@@ -132,55 +132,60 @@ public class AlphaBeta {
 	 * @return
 	 */
 	private int evaluate(State s) {
+		int score = 0;
+		for (int i = 0; i < s.board.length; i++)
+			for (int j = 0; j < s.board.length; j++)
+				score += eval(s, i, j);
+
 		// an example eval f(n) for tic tac toe was
 		// (#3lengths open for me) - (#3lengths open for you)
-		if (s.checkWin() == 1)
-			return Integer.MAX_VALUE / 4;
-		if (s.checkWin() == -1)
-			return Integer.MIN_VALUE / 4;
-		if (s.spaces == 0)
-			return 0;
-		int score = 0;
-		int xCount = 0; // variable to keep track of Xs in a row
-		int oCount = 0; // variable to keep track of Os in a row
-		// checks for all vertical rows possible
-		for (int i = 0; i < s.board.length; ++i)
-			for (int j = 0; j < s.board.length - 3; ++j) {
-				for (int k = j; k < j + 4; ++k) {
-					if (s.board[i][k] == 1)
-						xCount++;
-					if (s.board[i][k] == -1)
-						oCount++;
-				}
-				if (!(xCount > 0 && oCount > 0)) {
-					if (xCount > 0)
-						score += xCount;
-					if (oCount > 0)
-						score -= oCount;
-					xCount = 0;
-					oCount = 0;
-				}
-			}
-		xCount = 0;
-		oCount = 0;
-		// checks for all horizontal rows possible
-		for (int i = 0; i < s.board.length - 3; ++i)
-			for (int j = 0; j < s.board.length; ++j) {
-				for (int k = i; k < i + 4; ++k) {
-					if (s.board[k][j] == 1)
-						xCount++;
-					if (s.board[k][j] == -1)
-						oCount++;
-				}
-				if (!(xCount > 0 && oCount > 0)) {
-					if (xCount > 0)
-						score += xCount;
-					if (oCount > 0)
-						score -= oCount;
-					xCount = 0;
-					oCount = 0;
-				}
-			}
+		// if (s.checkWin() == 1)
+		// return Integer.MAX_VALUE / 4;
+		// if (s.checkWin() == -1)
+		// return Integer.MIN_VALUE / 4;
+		// if (s.spaces == 0)
+		// return 0;
+		// int score = 0;
+		// int xCount = 0; // variable to keep track of Xs in a row
+		// int oCount = 0; // variable to keep track of Os in a row
+		// // checks for all vertical rows possible
+		// for (int i = 0; i < s.board.length; ++i)
+		// for (int j = 0; j < s.board.length - 3; ++j) {
+		// for (int k = j; k < j + 4; ++k) {
+		// if (s.board[i][k] == 1)
+		// xCount++;
+		// if (s.board[i][k] == -1)
+		// oCount++;
+		// }
+		// if (!(xCount > 0 && oCount > 0)) {
+		// if (xCount > 0)
+		// score += xCount;
+		// if (oCount > 0)
+		// score -= oCount;
+		// xCount = 0;
+		// oCount = 0;
+		// }
+		// }
+		// xCount = 0;
+		// oCount = 0;
+		// // checks for all horizontal rows possible
+		// for (int i = 0; i < s.board.length - 3; ++i)
+		// for (int j = 0; j < s.board.length; ++j) {
+		// for (int k = i; k < i + 4; ++k) {
+		// if (s.board[k][j] == 1)
+		// xCount++;
+		// if (s.board[k][j] == -1)
+		// oCount++;
+		// }
+		// if (!(xCount > 0 && oCount > 0)) {
+		// if (xCount > 0)
+		// score += xCount;
+		// if (oCount > 0)
+		// score -= oCount;
+		// xCount = 0;
+		// oCount = 0;
+		// }
+		// }
 
 		/*
 		 * for (int i = 0; i < s.board.length; ++i) { for (int j = 0; j <
@@ -204,6 +209,72 @@ public class AlphaBeta {
 		 * 0; xCount = 0; } } xCount = 0; oCount = 0; }
 		 */
 		return score;
+	}
+
+	/**
+	 * Checks 3 spaces in each direction from a space to count for potential
+	 */
+	private int eval(State s, int i, int j) {
+		int score = 0;
+		int temp = 0;
+		int check = s.board[i][j];
+		if (i >= 3) {
+			for (int c = 1; c < 4; c++)
+				if (s.board[i - c][j] == check)
+					temp += 10;
+				else if (s.board[i - c][j] == 0)
+					temp++;
+				else {// path blocked
+					temp = 0;
+					c = 10;
+				}
+			score += temp;
+			temp = 0;
+		} else
+			score--;
+		if (i < s.board.length - 3) {
+			for (int c = 1; c < 4; c++)
+				if (s.board[i + c][j] == check)
+					temp += 10;
+				else if (s.board[i + c][j] == 0)
+					temp++;
+				else {// path blocked
+					temp = 0;
+					c = 10;
+				}
+			score += temp;
+			temp = 0;
+		}
+		if (j >= 3) {
+			for (int c = 1; c < 4; c++)
+				if (s.board[i][j - c] == check)
+					temp += 10;
+				else if (s.board[i][j - c] == 0)
+					temp++;
+				else {// path blocked
+					temp = 0;
+					c = 10;
+				}
+			score += temp;
+			temp = 0;
+		} else
+			score--;
+		if (j < s.board.length - 3) {
+			for (int c = 1; c < 4; c++)
+				if (s.board[i][j + c] == check)
+					temp += 10;
+				else if (s.board[i][j + c] == 0)
+					temp++;
+				else {// path blocked
+					temp = 0;
+					c = 10;
+				}
+			score += temp;
+			temp = 0;
+		} else
+			score--;
+
+		return score * check;// negates if opponent
 	}
 
 	/**
