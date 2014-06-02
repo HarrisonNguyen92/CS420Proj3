@@ -16,34 +16,41 @@ public class AlphaBeta {
 	private List<Action> children = new ArrayList<Action>();
 	private long startTime;
 	private long limit;
+	private int depth;
 
 	public AlphaBeta(int lim) {
 		this.limit = (long) (lim * 1000);
 	}
 
 	public Action absearch(State state) {
+		depth = (int) limit;
 		startTime = System.currentTimeMillis();
 		generateSuccessors(state);
 		alpha = Integer.MIN_VALUE;
 		beta = Integer.MAX_VALUE;
+
 		int v = maxValue(state);
-		for (Action move : children)
-			if (evaluate(state.fakeMove(move.i, move.j, false),
-					state.spaces - 1) >= v)
-				return move;
-		return children.get(0); // return action from successors with value v
+
+		for (Action a : children){
+			state.move(a.i, a.j, false);
+			if (evaluate(state) < v)
+				children.remove(a); // eliminates all unnecessary states
+			state.undo(a.i, a.j);
+		}
+		return children.get(0);
 	}
 
 	private int maxValue(State state) {
-		if (cutoff() || state.checkWin() != 0 || state.spaces <= 0)
-			return evaluate(state.board, state.spaces);// return utility value
-														// of st
+		// return utility value of st
+		if (cutoff() || state.checkWin() != 0 || state.spaces <= 0
+				|| depth == 0)
+			return evaluate(state);
 		int v = Integer.MIN_VALUE;
-		for (Action move : children) {
-			v = Integer.max(
-					v,
-					evaluate(state.fakeMove(move.i, move.j, false),
-							state.spaces - 1));
+		for (Action a : children) {
+			state.move(a.i, a.j, false);
+			--depth;
+			v = Integer.max(v, minValue(state));
+			state.undo(a.i, a.j);
 			if (v >= beta)
 				return v;
 			alpha = Integer.max(alpha, v);
@@ -52,15 +59,16 @@ public class AlphaBeta {
 	}
 
 	private int minValue(State state) {
-		if (cutoff() || state.checkWin() != 0 || state.spaces <= 0)
-			return evaluate(state.board, state.spaces);// return utility value
-														// of st
+		// return utility value of st
+		if (cutoff() || state.checkWin() != 0 || state.spaces <= 0
+				|| depth == 0)
+			return evaluate(state);
 		int v = Integer.MAX_VALUE;
-		for (Action move : children) {
-			v = Integer.min(
-					v,
-					evaluate(state.fakeMove(move.i, move.j, true),
-							state.spaces - 1));
+		for (Action a : children) {
+			state.move(a.i,  a.j, true);
+			--depth;
+			v = Integer.min(v, maxValue(state));
+			state.undo(a.i, a.j);
 			if (v >= alpha)
 				return v;
 			beta = Integer.min(beta, v);
@@ -69,6 +77,7 @@ public class AlphaBeta {
 	}
 
 	private void generateSuccessors(State s) {
+		children.clear();
 		for (int i = 0; i < s.board.length; ++i)
 			for (int j = 0; j < s.board[i].length; ++j)
 				if (s.board[i][j] == 0) {
@@ -82,15 +91,41 @@ public class AlphaBeta {
 	 * @param s
 	 * @return
 	 */
-	private int evaluate(int[][] init, int spaces) {
-		State s = new State(init, spaces);
+	private int evaluate(State s) {
 		if (s.checkWin() == 1)
-			return Integer.MAX_VALUE;
+			return Integer.MAX_VALUE / 4;
 		if (s.checkWin() == -1)
-			return Integer.MIN_VALUE;
+			return Integer.MIN_VALUE / 4;
 		if (s.spaces == 0)
 			return 0;
-		return 0;
+		int score = 0;
+		for (int i = 0; i < s.board.length; ++i)
+			for (int j = 0; j < s.board.length; ++j)
+				if (s.board[i][j] != 0)
+					for (int n = 1; n < 4; ++n) {
+						if (i + n < s.board.length) {
+							score++;
+							if (s.board[i][j] == s.board[i + n][j])
+								score += s.board[i][j];
+						}
+						if (j + n < s.board.length) {
+							score++;
+							if (s.board[i][j] == s.board[i][j + n])
+								score += s.board[i][j];
+						}
+						if (i - n > 0) {
+							score++;
+							if (s.board[i][j] == s.board[i - n][j])
+								score += s.board[i][j];
+						}
+						if (j - n > 0) {
+							score++;
+							if (s.board[i][j] == s.board[i][j - n])
+								score += s.board[i][j];
+						}
+					}
+		return score;
+
 	}
 
 	/**
