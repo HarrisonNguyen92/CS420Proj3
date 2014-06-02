@@ -21,7 +21,6 @@ public class State {
 		if (i < 0)
 			i = input.charAt(0) - 65;
 		int j = input.charAt(1) - 49;
-		--spaces;
 		return move(i, j, player);
 	}
 
@@ -30,19 +29,23 @@ public class State {
 		if (i > board.length || j > board.length || i < 0 || j < 0
 				|| board[i][j] != 0)
 			return false;
+		
+		--spaces;
 		if (player)
 			board[i][j] = -1;
 		else
 			board[i][j] = 1;
 		return true;
 	}
-	
-	public boolean undo(int i , int j) {
+
+	public boolean undo(int i, int j) {
 		if (board[i][j] == 0)
 			return false;
-		else
+		else {
+			++spaces;
 			board[i][j] = 0;
-		return true;
+			return true;
+		}
 	}
 
 	/**
