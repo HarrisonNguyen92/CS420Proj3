@@ -49,7 +49,8 @@ public class Main {
 				}
 			} else {
 				// program move
-				a = ai.absearch(state);
+				//a = ai.absearch(state);
+				a = ai.makeMove(state);
 				state.move(a.i, a.j, player);
 				a.print();
 			}
