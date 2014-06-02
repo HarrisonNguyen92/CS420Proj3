@@ -31,10 +31,11 @@ public class AlphaBeta {
 
 		int v = maxValue(state);
 
-		for (Action a : children){
+		for (int t = 0 ; t < children.size(); ++t) {
+			Action a = children.get(t);
 			state.move(a.i, a.j, false);
 			if (evaluate(state) < v)
-				children.remove(a); // eliminates all unnecessary states
+				children.remove(t); // eliminates all unnecessary states
 			state.undo(a.i, a.j);
 		}
 		return children.get(0);
@@ -43,12 +44,12 @@ public class AlphaBeta {
 	private int maxValue(State state) {
 		// return utility value of st
 		if (cutoff() || state.checkWin() != 0 || state.spaces <= 0
-				|| depth == 0)
+				|| depth < 0)
 			return evaluate(state);
 		int v = Integer.MIN_VALUE;
+		--depth;
 		for (Action a : children) {
 			state.move(a.i, a.j, false);
-			--depth;
 			v = Integer.max(v, minValue(state));
 			state.undo(a.i, a.j);
 			if (v >= beta)
@@ -61,12 +62,12 @@ public class AlphaBeta {
 	private int minValue(State state) {
 		// return utility value of st
 		if (cutoff() || state.checkWin() != 0 || state.spaces <= 0
-				|| depth == 0)
+				|| depth < 0)
 			return evaluate(state);
 		int v = Integer.MAX_VALUE;
+		--depth;
 		for (Action a : children) {
 			state.move(a.i,  a.j, true);
-			--depth;
 			v = Integer.min(v, maxValue(state));
 			state.undo(a.i, a.j);
 			if (v >= alpha)
