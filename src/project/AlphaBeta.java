@@ -33,8 +33,13 @@ public class AlphaBeta {
 	 */
 	private int depth;
 
-	public AlphaBeta(int lim) {
+	private boolean first;
+
+	private static final boolean NATHAN = true;
+
+	public AlphaBeta(int lim, boolean b) {
 		this.limit = (long) (lim * 1000);
+		this.first = b;
 	}
 
 	public Action absearch(State state) {
@@ -137,6 +142,13 @@ public class AlphaBeta {
 		int x = 0;
 		int o = 0;
 
+		if (NATHAN) {
+			for (int i = 0; i < s.board.length; i++)
+				for (int j = 0; j < s.board.length; j++)
+					score += eval(s, i, j);
+			return score;
+		}
+
 		// checks for all vertical rows possible
 		for (int i = 0; i < s.board.length; ++i)
 			for (int j = 0; j < s.board.length - 3; ++j) {
@@ -146,10 +158,6 @@ public class AlphaBeta {
 					if (s.board[i][j + k] == -1)
 						o++;
 				}
-				if (o < x)
-					score -= x;
-				if (x < o)
-					score += o;
 				score += x * x;
 				score -= o * o;
 				x = 0;
@@ -165,10 +173,6 @@ public class AlphaBeta {
 					if (s.board[i + k][j] == -1)
 						o++;
 				}
-				if (o < x)
-					score -= x;
-				if (x < o)
-					score += o;
 				score += x * x;
 				score -= o * o;
 				x = 0;
@@ -176,4 +180,77 @@ public class AlphaBeta {
 			}
 		return score;
 	}
+
+	/**
+	 * Checks 3 spaces in each direction from a space to count for potential
+	 */
+	private int eval(State s, int i, int j) {
+		int score = 0;
+		int base = 5;
+		int temp = 0;
+		int check = s.board[i][j];
+		if (!first && check < 0)
+			base+=3;
+		if (i >= 3) {
+			for (int c = 1; c < 4; c++)
+				if (s.board[i - c][j] == check)
+					temp += base - c;
+				else if (s.board[i - c][j] != 0) {// path blocked
+					temp = 0;
+					c = 10;
+				}
+			if (i < s.board.length - 1)
+				if (temp == 7 && s.board[i + 1][j] == 0)
+					return 10000 * check;
+			score += temp;
+			temp = 0;
+		} else
+			score--;
+		if (i < s.board.length - 3) {
+			for (int c = 1; c < 4; c++)
+				if (s.board[i + c][j] == check)
+					temp += base - c;
+				else if (s.board[i + c][j] != 0) {// path blocked
+					temp = 0;
+					c = 10;
+				}
+			if (i > 0)
+				if (temp == 7 && s.board[i - 1][j] == 0)
+					return 10000 * check;
+			score += temp;
+			temp = 0;
+		}
+		if (j >= 3) {
+			for (int c = 1; c < 4; c++)
+				if (s.board[i][j - c] == check)
+					temp += base - c;
+				else if (s.board[i][j - c] != 0) {// path blocked
+					temp = 0;
+					c = 10;
+				}
+			if (j < s.board.length - 1)
+				if (temp == 7 && s.board[i][j + 1] == 0)
+					return 10000 * check;
+			score += temp;
+			temp = 0;
+		} else
+			score--;
+		if (j < s.board.length - 3) {
+			for (int c = 1; c < 4; c++)
+				if (s.board[i][j + c] == check)
+					temp += base - c;
+				else if (s.board[i][j + c] != 0) {// path blocked
+					temp = 0;
+					c = 10;
+				}
+			if (j > 0)
+				if (temp == 7 && s.board[i][j - 1] == 0)
+					return 10000 * check;
+			score += temp;
+			temp = 0;
+		} else
+			score--;
+		return score * check;// negates if opponent
+	}
+
 }

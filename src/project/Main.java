@@ -28,7 +28,7 @@ public class Main {
 		State state = new State(new int[N][N], N * N);
 
 		System.out.println("How long should the program think to make a move?");
-		ai = new AlphaBeta(sc.nextInt());
+		int limit = sc.nextInt();
 		sc.nextLine();
 
 		System.out.println("Are you going first? (Y/N)");
@@ -37,6 +37,7 @@ public class Main {
 		else 
 			player = true;
 		printState(state);
+		ai = new AlphaBeta(limit, !player);
 		
 		while (state.spaces > 0) {
 			if (player) {
