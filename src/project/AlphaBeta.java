@@ -3,6 +3,10 @@
  */
 package project;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
 /**
  * @author Harrison
  * 
@@ -28,11 +32,6 @@ public class AlphaBeta {
 	 */
 	private long limit;
 
-	/**
-	 * depth of the algorithm (to be used with IDDFS)
-	 */
-	private int depth;
-
 	private boolean first;
 
 	private static final boolean NATHAN = true;
@@ -43,41 +42,37 @@ public class AlphaBeta {
 	}
 
 	public Action absearch(State state) {
-		depth = Integer.MAX_VALUE;
 		int score;
-		int mi = 0;
-		int mj = 0;
 		alpha = Integer.MIN_VALUE;
 		beta = Integer.MAX_VALUE;
 		int best = alpha;
-
+		int mi= 0, mj=0;
 		startTime = System.currentTimeMillis();
 		for (int i = 0; i < state.board.length; i++) {
 			for (int j = 0; j < state.board.length; j++) {
 				if (state.board[i][j] == 0) {
 					state.move(i, j, false);
 					score = minValue(state);
+					System.out.printf("%+5d", score);
 					if (score > best) {
 						mi = i;
 						mj = j;
 						best = score;
 					}
 					state.undo(i, j); // undo move
-				}
-				// Potential random choice area. need list and PRNG
+				} else System.out.print("  () ");		
 			}
+			System.out.println();
 		}
 		System.out.println(best);
 		return new Action(mi, mj);
 	}
+	
 
 	private int maxValue(State state) {
-		if (cutoff() || depth <= 0 || state.spaces <= 0
-				|| state.checkWin() != 0)
+		if (cutoff() || state.spaces <= 0 || state.checkWin() != 0)
 			return eval(state);
-
 		int best = alpha;
-		depth--;
 		for (int i = 0; i < state.board.length; i++) {
 			for (int j = 0; j < state.board.length; j++) {
 				if (state.board[i][j] == 0) {
@@ -93,12 +88,9 @@ public class AlphaBeta {
 	}
 
 	private int minValue(State state) {
-		if (cutoff() || depth <= 0 || state.spaces <= 0
-				|| state.checkWin() != 0)
-
+		if (cutoff() ||state.spaces <= 0 || state.checkWin() != 0)
 			return eval(state);
 		int best = beta;
-		depth--;
 		for (int i = 0; i < state.board.length; i++) {
 			for (int j = 0; j < state.board.length; j++) {
 				if (state.board[i][j] == 0) {
@@ -149,7 +141,6 @@ public class AlphaBeta {
 			return score;
 		}
 
-		// checks for all vertical rows possible
 		for (int i = 0; i < s.board.length; ++i)
 			for (int j = 0; j < s.board.length - 3; ++j) {
 				for (int k = 0; k < 4; ++k) {
@@ -158,23 +149,31 @@ public class AlphaBeta {
 					if (s.board[i][j + k] == -1)
 						o++;
 				}
-				score += x * x;
-				score -= o * o;
+				score += x * x * 4;
+				score -= o * o * 4;
+				if (o == 1 && o < x)
+					score -= x * x * 4;
+				if (x == 1 && x < o)
+					score += o * o * 4;
 				x = 0;
 				o = 0;
-			}
 
-		// checks for all horizontal rows possible
-		for (int i = 0; i < s.board.length - 3; ++i)
-			for (int j = 0; j < s.board.length; ++j) {
 				for (int k = 0; k < 4; ++k) {
-					if (s.board[i + k][j] == 1)
+					if (s.board[j + k][i] == 1)
 						x++;
-					if (s.board[i + k][j] == -1)
+					if (s.board[j + k][i] == -1)
 						o++;
 				}
-				score += x * x;
-				score -= o * o;
+				score += x;
+				score -= o;
+				if (o == 1 && x == 2)
+					score -= x + 10;
+				if (x == 1 && o == 2)
+					score += o + 10;
+				if (o == 1 && x == 3)
+					score -= x + 20;
+				if (x == 1 && o == 3)
+					score += o + 20;
 				x = 0;
 				o = 0;
 			}
@@ -190,7 +189,8 @@ public class AlphaBeta {
 		int temp = 0;
 		int check = s.board[i][j];
 		if (!first && check < 0)
-			base+=3;
+			base += 3;
+
 		if (i >= 3) {
 			for (int c = 1; c < 4; c++)
 				if (s.board[i - c][j] == check)
@@ -206,6 +206,7 @@ public class AlphaBeta {
 			temp = 0;
 		} else
 			score--;
+
 		if (i < s.board.length - 3) {
 			for (int c = 1; c < 4; c++)
 				if (s.board[i + c][j] == check)
@@ -219,7 +220,9 @@ public class AlphaBeta {
 					return 10000 * check;
 			score += temp;
 			temp = 0;
-		}
+		} else
+			score--;
+
 		if (j >= 3) {
 			for (int c = 1; c < 4; c++)
 				if (s.board[i][j - c] == check)
@@ -235,6 +238,7 @@ public class AlphaBeta {
 			temp = 0;
 		} else
 			score--;
+
 		if (j < s.board.length - 3) {
 			for (int c = 1; c < 4; c++)
 				if (s.board[i][j + c] == check)
