@@ -121,85 +121,11 @@ public class AlphaBeta {
 	}
 
 	/**
-	 * Evaluate non-terminal states
+	 * Calculates the score of a board state
 	 * 
 	 * @param s
 	 * @return
 	 */
-	private int evaluate(State s) {
-		int score = 0;
-		for (int i = 0; i < s.board.length; i++)
-			for (int j = 0; j < s.board.length; j++)
-				score += eval(s, i, j);
-		return score;
-	}
-
-	/**
-	 * Checks 3 spaces in each direction from a space to count for potential
-	 */
-	private int eval(State s, int i, int j) {
-		int score = 0;
-		int temp = 0;
-		int check = s.board[i][j];
-		if (i >= 3) {
-			for (int c = 1; c < 4; c++)
-				if (s.board[i - c][j] == check)
-					temp += 10;
-				else if (s.board[i - c][j] == 0)
-					temp++;
-				else {// path blocked
-					temp = 0;
-					c = 10;
-				}
-			score += temp;
-			temp = 0;
-		} else
-			score--;
-		if (i < s.board.length - 3) {
-			for (int c = 1; c < 4; c++)
-				if (s.board[i + c][j] == check)
-					temp += 10;
-				else if (s.board[i + c][j] == 0)
-					temp++;
-				else {// path blocked
-					temp = 0;
-					c = 10;
-				}
-			score += temp;
-			temp = 0;
-		}
-		if (j >= 3) {
-			for (int c = 1; c < 4; c++)
-				if (s.board[i][j - c] == check)
-					temp += 10;
-				else if (s.board[i][j - c] == 0)
-					temp++;
-				else {// path blocked
-					temp = 0;
-					c = 10;
-				}
-			score += temp;
-			temp = 0;
-		} else
-			score--;
-		if (j < s.board.length - 3) {
-			for (int c = 1; c < 4; c++)
-				if (s.board[i][j + c] == check)
-					temp += 10;
-				else if (s.board[i][j + c] == 0)
-					temp++;
-				else {// path blocked
-					temp = 0;
-					c = 10;
-				}
-			score += temp;
-			temp = 0;
-		} else
-			score--;
-
-		return score * check;// negates if opponent
-	}
-
 	private int eval(State s) {
 		if (s.checkWin() == 1)
 			return Integer.MAX_VALUE / 2;
@@ -220,6 +146,10 @@ public class AlphaBeta {
 					if (s.board[i][j + k] == -1)
 						o++;
 				}
+				if (o < x)
+					score -= x;
+				if (x < o)
+					score += o;
 				score += x * x;
 				score -= o * o;
 				x = 0;
@@ -235,6 +165,10 @@ public class AlphaBeta {
 					if (s.board[i + k][j] == -1)
 						o++;
 				}
+				if (o < x)
+					score -= x;
+				if (x < o)
+					score += o;
 				score += x * x;
 				score -= o * o;
 				x = 0;
