@@ -57,15 +57,20 @@ public class AlphaBeta {
 				if (state.board[i][j] == 0) {
 					state.move(i, j, false);
 					score = minValue(state);
+					System.out.printf("%+4d", score);
 					if (score > best) {
 						mi = i;
 						mj = j;
 						best = score;
 					}
 					state.undo(i, j); // undo move
-				}
+				} else
+					System.out.print(" [] ");
+
 				// Potential random choice area. need list and PRNG
 			}
+			System.out.println();
+
 		}
 		System.out.println(best);
 		return new Action(mi, mj);
@@ -279,6 +284,17 @@ public class AlphaBeta {
 			temp = 0;
 		} else
 			score--;
+
+		// check immediate diagonals, mostly to help break ties
+		if (!first)
+			if (i >= 1 && i < s.board.length - 1 && j >= 1
+					&& j < s.board.length - 1) {
+				if (s.board[i + 1][j + 1] == check
+						|| s.board[i + 1][j - 1] == check
+						|| s.board[i - 1][j + 1] == check
+						|| s.board[i - 1][j - 1] == check)
+					score++;
+			}
 
 		if (!first)
 			check = s.board[i][j];
