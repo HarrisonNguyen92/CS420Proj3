@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package project;
 
@@ -89,8 +89,9 @@ public class AlphaBeta {
 					state.move(i, j, true);
 					best = Integer.max(best, minValue(state));
 					state.undo(i, j);
-					if (best > beta)
+					if (best >= beta)
 						return beta;
+					alpha = Integer.max(alpha, best);
 				}
 			}
 		}
@@ -110,8 +111,9 @@ public class AlphaBeta {
 					state.move(i, j, false);
 					best = Integer.min(best, maxValue(state));
 					state.undo(i, j);
-					if (best < alpha)
+					if (best <= alpha)
 						return alpha;
+					beta = Integer.min(beta, best);
 				}
 			}
 		}
