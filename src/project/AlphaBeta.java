@@ -214,9 +214,7 @@ public class AlphaBeta {
 				}
 			// special cases
 			if (i < s.board.length - 1)// preceded by blank (-xx- or -xxx-)
-				if (temp == 4 && s.board[i + 1][j] == 0)
-					temp++;
-				else if (temp == 7 && s.board[i + 1][j] == 0)
+				if (temp == 7 && s.board[i + 1][j] == 0)
 					temp = 10000;
 			if (!first && temp == 9)
 				temp = 9990;
@@ -235,9 +233,7 @@ public class AlphaBeta {
 				}
 			// special cases
 			if (i > 0)// preceded by blank (-xx- or -xxx-)
-				if (temp == 4 && s.board[i - 1][j] == 0)
-					temp++;
-				else if (temp == 7 && s.board[i - 1][j] == 0)
+				if (temp == 7 && s.board[i - 1][j] == 0)
 					temp = 10000;
 			if (!first && temp == 9)
 				temp = 9990;
@@ -256,9 +252,7 @@ public class AlphaBeta {
 				}
 			// special cases
 			if (j < s.board.length - 1)// preceded by blank (-xx- or -xxx-)
-				if (temp == 4 && s.board[i][j + 1] == 0)
-					temp++;
-				else if (temp == 7 && s.board[i][j + 1] == 0)
+				if (temp == 7 && s.board[i][j + 1] == 0)
 					temp = 10000;
 			if (!first && temp == 9)
 				temp = 9990;
@@ -277,9 +271,7 @@ public class AlphaBeta {
 				}
 			// special cases
 			if (j > 0)// preceded by blank (-xx- or -xxx-)
-				if (temp == 4 && s.board[i][j - 1] == 0)
-					temp++;
-				else if (temp == 7 && s.board[i][j - 1] == 0)
+				if (temp == 7 && s.board[i][j - 1] == 0)
 					temp = 10000;
 			if (!first && temp == 9)
 				temp = 9990;
