@@ -91,7 +91,6 @@ public class AlphaBeta {
 					state.undo(i, j);
 					if (best >= beta)
 						return beta;
-					alpha = Integer.max(alpha, best);
 				}
 			}
 		}
@@ -113,7 +112,6 @@ public class AlphaBeta {
 					state.undo(i, j);
 					if (best <= alpha)
 						return alpha;
-					beta = Integer.min(beta, best);
 				}
 			}
 		}
