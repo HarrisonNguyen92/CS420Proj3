@@ -186,71 +186,110 @@ public class AlphaBeta {
 	 */
 	private int eval(State s, int i, int j) {
 		int score = 0;
-		int base = 5;
 		int temp = 0;
 		int check = s.board[i][j];
-		if (!first && check < 0)
-			base+=3;
+
+		// Acts as if the move is actually an O, and checks for an O win.
+		// Necessary to combat O-OO and such
+		if (!first && check > 0) {
+			check = -1;
+			s.board[i][j] = -1;
+			if (s.checkWin() == -1) {
+				score += 10000;
+			}
+			s.board[i][j] = 1;
+		}
+
+		// Tricks AI into thinking it's Os when not first, turning him into a
+		// blocker from hell
+		if (!first)
+			check = -1;
 		if (i >= 3) {
 			for (int c = 1; c < 4; c++)
 				if (s.board[i - c][j] == check)
-					temp += base - c;
+					temp += 5 - c;
 				else if (s.board[i - c][j] != 0) {// path blocked
-					temp = 0;
+					temp = -1;
 					c = 10;
 				}
-			if (i < s.board.length - 1)
-				if (temp == 7 && s.board[i + 1][j] == 0)
-					return 10000 * check;
+			// special cases
+			if (i < s.board.length - 1)// preceded by blank (-xx- or -xxx-)
+				if (temp == 4 && s.board[i + 1][j] == 0)
+					temp++;
+				else if (temp == 7 && s.board[i + 1][j] == 0)
+					temp = 10000;
+			if (!first && temp == 9)
+				temp = 9990;
 			score += temp;
 			temp = 0;
 		} else
 			score--;
+
 		if (i < s.board.length - 3) {
 			for (int c = 1; c < 4; c++)
 				if (s.board[i + c][j] == check)
-					temp += base - c;
+					temp += 5 - c;
 				else if (s.board[i + c][j] != 0) {// path blocked
-					temp = 0;
+					temp = -1;
 					c = 10;
 				}
-			if (i > 0)
-				if (temp == 7 && s.board[i - 1][j] == 0)
-					return 10000 * check;
+			// special cases
+			if (i > 0)// preceded by blank (-xx- or -xxx-)
+				if (temp == 4 && s.board[i - 1][j] == 0)
+					temp++;
+				else if (temp == 7 && s.board[i - 1][j] == 0)
+					temp = 10000;
+			if (!first && temp == 9)
+				temp = 9990;
 			score += temp;
 			temp = 0;
-		}
+		} else
+			score--;
+
 		if (j >= 3) {
 			for (int c = 1; c < 4; c++)
 				if (s.board[i][j - c] == check)
-					temp += base - c;
+					temp += 5 - c;
 				else if (s.board[i][j - c] != 0) {// path blocked
-					temp = 0;
+					temp = -1;
 					c = 10;
 				}
-			if (j < s.board.length - 1)
-				if (temp == 7 && s.board[i][j + 1] == 0)
-					return 10000 * check;
+			// special cases
+			if (j < s.board.length - 1)// preceded by blank (-xx- or -xxx-)
+				if (temp == 4 && s.board[i][j + 1] == 0)
+					temp++;
+				else if (temp == 7 && s.board[i][j + 1] == 0)
+					temp = 10000;
+			if (!first && temp == 9)
+				temp = 9990;
 			score += temp;
 			temp = 0;
 		} else
 			score--;
+
 		if (j < s.board.length - 3) {
 			for (int c = 1; c < 4; c++)
 				if (s.board[i][j + c] == check)
-					temp += base - c;
+					temp += 5 - c;
 				else if (s.board[i][j + c] != 0) {// path blocked
-					temp = 0;
+					temp = -1;
 					c = 10;
 				}
-			if (j > 0)
-				if (temp == 7 && s.board[i][j - 1] == 0)
-					return 10000 * check;
+			// special cases
+			if (j > 0)// preceded by blank (-xx- or -xxx-)
+				if (temp == 4 && s.board[i][j - 1] == 0)
+					temp++;
+				else if (temp == 7 && s.board[i][j - 1] == 0)
+					temp = 10000;
+			if (!first && temp == 9)
+				temp = 9990;
 			score += temp;
 			temp = 0;
 		} else
 			score--;
+
+		if (!first)
+			check = s.board[i][j];
 		return score * check;// negates if opponent
 	}
-
 }
