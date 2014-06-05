@@ -36,7 +36,7 @@ public class Main {
 			player = false;
 		else 
 			player = true;
-		printState(state);
+		state.print();
 		ai = new AlphaBeta(limit, !player);
 		
 		while (state.spaces > 0) {
@@ -59,7 +59,7 @@ public class Main {
 				player = false;
 			else
 				player = true;
-			printState(state);
+			state.print();
 			if (state.checkWin() != 0)
 				break;
 		}
@@ -85,23 +85,4 @@ public class Main {
 	 * public static String convert(Action a) { return Character.toString((char)
 	 * (a.i + 97)) + Character.toString((char) (a.j + 49)); }
 	 */
-
-	/**
-	 * Prints out a given state
-	 */
-	public static void printState(State state) {
-		System.out.println("  1 2 3 4 5 6 7 8");
-		char c = 'a';
-		for (int i = 0; i < N; i++) {
-			System.out.print("" + (c++) + " ");
-			for (int j = 0; j < N; j++)
-				if (state.board[i][j] == 0)
-					System.out.print("- ");
-				else if (state.board[i][j] == 1)
-					System.out.print("X ");
-				else
-					System.out.print("O ");
-			System.out.println("");
-		}
-	}
 }

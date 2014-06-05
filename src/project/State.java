@@ -83,4 +83,23 @@ public class State {
 				return false;
 		return true;
 	}
+	
+	/**
+	 * Prints out a given state
+	 */
+	public void print() {
+		System.out.println("  1 2 3 4 5 6 7 8");
+		char c = 'a';
+		for (int i = 0; i < board.length; i++) {
+			System.out.print("" + (c++) + " ");
+			for (int j = 0; j < board.length; j++)
+				if (board[i][j] == 0)
+					System.out.print("- ");
+				else if (board[i][j] == 1)
+					System.out.print("X ");
+				else
+					System.out.print("O ");
+			System.out.println("");
+		}
+	}
 }
